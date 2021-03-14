@@ -3,7 +3,17 @@ import bs4
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 
-my_url = 'https://www.newegg.com/p/pl?d=nvidia+3080+graphics+card&N=100007709&cm_sp=Category-_-INFOCARD-_-nvidia+3080+graphics+card-_-L48-_-1&name=Desktop-Graphics-Cards'
+class GraphicCards:
+    def __init__(self, make, graphics_card_name, stock, shipping, link):
+        self.make = make
+        self.graphics_card_name = graphics_card_name
+        self.stock = stock
+        self.shipping = shipping
+        self.link = link
+
+page_list = []        
+page_num = 1
+my_url = 'https://www.newegg.com/p/pl?N=100007709%20601357282&page=' + str(page_num)
 
 #Opening up connection, grabbing the page
 uClient = uReq(my_url)
@@ -13,7 +23,16 @@ uClient.close()
 #HTML parsing
 page_soup = soup(page_html, "html.parser")
 
-#Graps each product
+#Grabs the current and total pages
+page_element = page_soup.findAll("span", {"class": "list-tool-pagination-text"})
+page_element_text = page_element[0].text
+page_number_text = page_element_text.split(' ')[1]
+page_number_text_count = page_number_text.split('/')
+
+total_pages = int(page_number_text_count[1])
+current_page = int(page_number_text_count[0])
+
+#Grabs each product
 containers = page_soup.findAll("div", {"class": "item-container"})
 
 # Create a workbook and add a worksheet.
@@ -30,36 +49,39 @@ for container in containers:
     #Stock
     stock = container.findAll("p", {"class":"item-promo"})[0].text
     #Check to see if there is available stock first, if yes print the Graphics card info
+    if stock == "OUT OF STOCK":
 
-    #Graphics card make
-    if hasattr(container.div.div, "a"):
-        make = container.div.div.a.img["title"]
-    else:
-        make = "Make is unknown"
+        #Graphics card make
+        if hasattr(container.div.div, "a"):
+            make = container.div.div.a.img["title"]
+        else:
+            make = "Make is unknown"
+        #Graphics card name
+        name_container = container.findAll("a", {"class":"item-title"})
+        graphics_card_name = name_container[0].text
+        
+        #Shipping cost
+        shipping_container = container.findAll("li", {"class":"price-ship"})
+        shipping = shipping_container[0].text.strip()
 
-    #Graphics card name
-    name_container = container.findAll("a", {"class":"item-title"})
-    graphics_card_name = name_container[0].text
+        #Link to Graphics card
+        item_title = container.div.findAll("a", {"class":"item-title"})
+        link = item_title[0]["href"]
 
-    #Shipping cost
-    shipping_container = container.findAll("li", {"class":"price-ship"})
-    shipping = shipping_container[0].text.strip()
+        #Create Graphics card class instance
+        card_info = GraphicCards(make, graphics_card_name, stock, shipping, link)
+        page_list.append(card_info)
 
-    #Link to Graphics card
-    item_info = container.findAll("div", {"class":"item-info"})
-    link = item_info[0].a["href"]
+        print("make: " + make)
+        print("graphics card name: " + graphics_card_name)
+        print("stock: " + stock)
+        print("shipping: " + shipping)
+        print("link: " + link)
 
-    print("make: " + make)
-    print("graphics card name: " + graphics_card_name)
-    print("stock: " + stock)
-    print("shipping: " + shipping)
-    print("link: " + link)
-
-    newEggWorksheet.write(row, col, make)
-    newEggWorksheet.write(row, col + 1, graphics_card_name)
-    newEggWorksheet.write(row, col + 2, stock)
-    newEggWorksheet.write(row, col + 3, shipping)
-    newEggWorksheet.write(row, col + 4, link)
-    row += 1
-    
+        newEggWorksheet.write(row, col, make)
+        newEggWorksheet.write(row, col + 1, graphics_card_name)
+        newEggWorksheet.write(row, col + 2, stock)
+        newEggWorksheet.write(row, col + 3, shipping)
+        newEggWorksheet.write(row, col + 4, link)
+        row += 1
 newEggWorkbook.close()
