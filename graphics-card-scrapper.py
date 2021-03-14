@@ -1,11 +1,11 @@
 import xlsxwriter
 import bs4
 from urllib.request import urlopen as uReq
+from datetime import datetime
 from bs4 import BeautifulSoup as soup
 
-      
+#######~GeForce RTX 30 Series~########
 page_num = 0
-#GeForce RTX 30 Series
 my_url = 'https://www.newegg.com/p/pl?N=100007709%20601357282&page=' + str(page_num)
 
 #Opening up connection, grabbing the page
@@ -24,7 +24,9 @@ page_number_text_count = page_number_text.split('/')
 total_pages = int(page_number_text_count[1])
 
 # Create a workbook and add a worksheet.
-newEggWorkbook = xlsxwriter.Workbook('newEggGraphicsCard.xlsx')
+now = datetime.now()
+dt_string = now.strftime("%d-%m-%Y %Hhr %Mmin")
+newEggWorkbook = xlsxwriter.Workbook("newEggGraphicsCard_"+dt_string+".xlsx")
 newEggWorksheet = newEggWorkbook.add_worksheet()
 
 # Start from the first cell. Rows and columns are zero indexed.
@@ -80,4 +82,8 @@ while page_num < total_pages:
             newEggWorksheet.write(row, col + 4, link)
             row += 1
 uClient.close()
+#######~GeForce RTX 30 Series End~########
+
+
+
 newEggWorkbook.close()
