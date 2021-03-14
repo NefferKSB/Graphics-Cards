@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup as soup
 
       
 page_num = 0
+#GeForce RTX 30 Series
 my_url = 'https://www.newegg.com/p/pl?N=100007709%20601357282&page=' + str(page_num)
 
 #Opening up connection, grabbing the page
