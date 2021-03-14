@@ -87,7 +87,7 @@ def runScrapper():
 
     newEggWorkbook.close()
 
-schedule.every().day.at("12:29").do(runScrapper, "It is 13:00")
+schedule.every().day.at("03:33").do(runScrapper)
 
 while True:
     schedule.run_pending()
