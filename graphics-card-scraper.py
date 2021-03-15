@@ -6,7 +6,7 @@ from urllib.request import urlopen as uReq
 from datetime import datetime
 from bs4 import BeautifulSoup as soup
 
-def runScrapper():
+def runScraper():
     #######~GeForce RTX 30 Series~########
     page_num = 0
     my_url = 'https://www.newegg.com/p/pl?N=100007709%20601357282&page=' + str(page_num)
@@ -87,8 +87,8 @@ def runScrapper():
 
     newEggWorkbook.close()
 
-schedule.every().day.at("03:33").do(runScrapper)
-schedule.every().day.at("13:33").do(runScrapper)
+schedule.every().day.at("03:33").do(runScraper)
+schedule.every().day.at("13:33").do(runScraper)
 
 while True:
     schedule.run_pending()
