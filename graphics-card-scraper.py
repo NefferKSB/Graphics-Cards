@@ -87,8 +87,14 @@ def runScraper():
 
     newEggWorkbook.close()
 
+<<<<<<< HEAD:graphics-card-scraper.py
 schedule.every().day.at("03:33").do(runScraper)
 schedule.every().day.at("13:33").do(runScraper)
+=======
+#schedule.every(1).minutes.do(runScrapper)
+schedule.every().day.at("03:33").do(runScrapper)
+schedule.every().day.at("13:33").do(runScrapper)
+>>>>>>> c919b530cead71bf286a3525e527a25df739ae29:graphics-card-scrapper.py
 
 while True:
     schedule.run_pending()
